@@ -482,7 +482,7 @@ public class Lua_UnityEngine_Application : LuaObject {
 	static public int get_bundleIdentifier(IntPtr l) {
 		try {
 			pushValue(l,true);
-			pushValue(l,UnityEngine.Application.bundleIdentifier);
+			pushValue(l,UnityEngine.Application.identifier);
 			return 2;
 		}
 		catch(Exception e) {

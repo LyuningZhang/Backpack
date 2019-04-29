@@ -1,6 +1,6 @@
 ﻿using System;
 using SLua;
-using System.Collections.Generic;
+using System.Collections.Generic;using UnityEngine;
 [UnityEngine.Scripting.Preserve]
 public class Lua_UnityEngine_WWW : LuaObject {
 	[MonoPInvokeCallbackAttribute(typeof(LuaCSFunction))]
@@ -404,7 +404,7 @@ public class Lua_UnityEngine_WWW : LuaObject {
 		try {
 			UnityEngine.WWW self=(UnityEngine.WWW)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.audioClip);
+			pushValue(l,self.GetAudioClip());
 			return 2;
 		}
 		catch(Exception e) {

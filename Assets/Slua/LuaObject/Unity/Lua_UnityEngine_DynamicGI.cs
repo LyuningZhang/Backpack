@@ -41,14 +41,14 @@ public class Lua_UnityEngine_DynamicGI : LuaObject {
 			if(matchType(l,argc,1,typeof(UnityEngine.Terrain))){
 				UnityEngine.Terrain a1;
 				checkType(l,1,out a1);
-				UnityEngine.DynamicGI.UpdateMaterials(a1);
+				UnityEngine.TerrainExtensions.UpdateGIMaterials(a1);
 				pushValue(l,true);
 				return 1;
 			}
 			else if(matchType(l,argc,1,typeof(UnityEngine.Renderer))){
 				UnityEngine.Renderer a1;
 				checkType(l,1,out a1);
-				UnityEngine.DynamicGI.UpdateMaterials(a1);
+				UnityEngine.RendererExtensions.UpdateGIMaterials(a1);
 				pushValue(l,true);
 				return 1;
 			}
@@ -63,7 +63,7 @@ public class Lua_UnityEngine_DynamicGI : LuaObject {
 				checkType(l,4,out a4);
 				System.Int32 a5;
 				checkType(l,5,out a5);
-				UnityEngine.DynamicGI.UpdateMaterials(a1,a2,a3,a4,a5);
+				UnityEngine.TerrainExtensions.UpdateGIMaterials(a1,a2,a3,a4,a5);
 				pushValue(l,true);
 				return 1;
 			}

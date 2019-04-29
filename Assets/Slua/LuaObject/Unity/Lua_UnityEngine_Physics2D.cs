@@ -3140,7 +3140,7 @@ public class Lua_UnityEngine_Physics2D : LuaObject {
 	static public int get_minPenetrationForPenalty(IntPtr l) {
 		try {
 			pushValue(l,true);
-			pushValue(l,UnityEngine.Physics2D.minPenetrationForPenalty);
+			pushValue(l,UnityEngine.Physics2D.defaultContactOffset);
 			return 2;
 		}
 		catch(Exception e) {
@@ -3153,7 +3153,7 @@ public class Lua_UnityEngine_Physics2D : LuaObject {
 		try {
 			float v;
 			checkType(l,2,out v);
-			UnityEngine.Physics2D.minPenetrationForPenalty=v;
+			UnityEngine.Physics2D.defaultContactOffset=v;
 			pushValue(l,true);
 			return 1;
 		}

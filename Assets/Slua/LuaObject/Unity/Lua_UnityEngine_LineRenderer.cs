@@ -269,7 +269,7 @@ public class Lua_UnityEngine_LineRenderer : LuaObject {
 		try {
 			UnityEngine.LineRenderer self=(UnityEngine.LineRenderer)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.numPositions);
+			pushValue(l,self.positionCount);
 			return 2;
 		}
 		catch(Exception e) {
@@ -283,7 +283,7 @@ public class Lua_UnityEngine_LineRenderer : LuaObject {
 			UnityEngine.LineRenderer self=(UnityEngine.LineRenderer)checkSelf(l);
 			int v;
 			checkType(l,2,out v);
-			self.numPositions=v;
+			self.positionCount=v;
 			pushValue(l,true);
 			return 1;
 		}

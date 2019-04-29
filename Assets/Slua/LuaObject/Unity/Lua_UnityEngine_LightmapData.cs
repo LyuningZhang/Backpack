@@ -23,7 +23,7 @@ public class Lua_UnityEngine_LightmapData : LuaObject {
 		try {
 			UnityEngine.LightmapData self=(UnityEngine.LightmapData)checkSelf(l);
 			pushValue(l,true);
-			pushValue(l,self.lightmapLight);
+			pushValue(l,self.lightmapColor);
 			return 2;
 		}
 		catch(Exception e) {
@@ -37,7 +37,7 @@ public class Lua_UnityEngine_LightmapData : LuaObject {
 			UnityEngine.LightmapData self=(UnityEngine.LightmapData)checkSelf(l);
 			UnityEngine.Texture2D v;
 			checkType(l,2,out v);
-			self.lightmapLight=v;
+			self.lightmapColor=v;
 			pushValue(l,true);
 			return 1;
 		}

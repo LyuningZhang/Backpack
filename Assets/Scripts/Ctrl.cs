@@ -14,7 +14,7 @@ public class Ctrl : MonoBehaviour
         luaSvr = new LuaSvr();
         luaSvr.init(null, () =>
          {
-             self = luaSvr.start("lua/Ctrl") as LuaTable;
+             self = luaSvr.start("lua/Start") as LuaTable;
              init = self["init"] as LuaFunction;
          });
         if(init != null)

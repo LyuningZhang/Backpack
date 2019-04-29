@@ -1,0 +1,39 @@
+import "UnityEngine"
+
+if not UnityEngine.GameObject or not  UnityEngine.UI then
+	error("Click Make/All to generate lua wrap file")
+end
+
+local class={}
+
+function BtnAddOnClick()
+	if class.gridManager:Add() == false then
+		return print("Backpack is full")
+	end
+end
+
+function BtnDelOnClick()
+	if class.gridManager:Delete() == false then
+		return print("Choose a wrong goods to delete")
+	end
+end
+
+function BtnSortOnClick()
+	class.gridManager:Sort()
+end
+
+function main()
+	class.sprite=UserFunction.GetImage(Slua.out)
+	return class
+end
+
+function class:init(transform)
+	class.content=transform:Find("Scroll View/Viewport/Content").gameObject.transform
+	class.btnAdd=transform:Find("BtnAdd"):GetComponent(UI.Button)
+	class.btnAdd.onClick:AddListener(BtnAddOnClick)
+	class.btnDel=transform:Find("BtnDel"):GetComponent(UI.Button)
+	class.btnDel.onClick:AddListener(BtnDelOnClick)
+	class.btnSort=transform:Find("BtnSort"):GetComponent(UI.Button)
+	class.btnSort.onClick:AddListener(BtnSortOnClick)
+	class.gridManager=GridManager:New(class.content)
+end

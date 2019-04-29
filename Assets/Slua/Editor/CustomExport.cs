@@ -43,7 +43,6 @@ namespace SLua
             add(typeof(List<int>), "ListInt");
             add(typeof(Dictionary<int, string>), "DictIntStr");
             add(typeof(string), "String");
-            add(typeof(UserFunction), null);
 
             // add your custom class here
             // add( type, typename)
