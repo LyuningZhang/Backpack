@@ -1,0 +1,262 @@
+import "UnityEngine"
+
+if not UnityEngine.GameObject or not  UnityEngine.UI then
+	error("Click Make/All to generate lua wrap file")
+end
+
+local class={}
+local content={}
+local gridManager={}
+
+local Grid={}
+
+function Grid:New(o)
+	o=o or {}
+	self.id=0
+	self.amount=0
+	self.__index=self
+	setmetatable(o,self)
+	return o
+end
+
+function Grid:Clear()
+	self.id=0
+	self.amount=0
+	self.image.sprite=class.sprite[1]
+	self.text.text=""
+end
+
+function Grid:Update(id)
+	id=id or 0
+	if type(id) ~= "number" then
+		return print("Error Update Goods id")
+	end
+	self.id=id
+	self.amount=1
+	self.image.sprite=class.sprite[self.id + 1]
+	self.text.text=self.amount
+end
+
+local FileOperation={}
+
+function FileOperation:Save(str)
+	bo=UserFunction.Save(str)
+	if bo == true then
+		print("save succeed")
+	else
+		print("fail")
+	end
+end
+
+function FileOperation:Load()
+	str=UserFunction.Load()
+	if str ~= "" then
+		return unserialize(str)
+	end
+	return playerData
+end
+
+function serialize(_t)
+    local szRet = "{"
+    function doT2S(_i, _v)
+        if "number" == type(_i) then
+            szRet = szRet .. "[" .. _i .. "] = "
+            if "number" == type(_v) then
+                szRet = szRet .. _v .. ","
+            elseif "string" == type(_v) then
+                szRet = szRet .. '"' .. _v .. '"' .. ","
+            elseif "table" == type(_v) then
+                szRet = szRet .. serialize(_v) .. ","
+            else
+                szRet = szRet .. "nil,"
+            end
+        elseif "string" == type(_i) then
+            szRet = szRet .. '["' .. _i .. '"] = '
+            if "number" == type(_v) then
+                szRet = szRet .. _v .. ","
+            elseif "string" == type(_v) then
+                szRet = szRet .. '"' .. _v .. '"' .. ","
+            elseif "table" == type(_v) then
+                szRet = szRet .. serialize(_v) .. ","
+            else
+                szRet = szRet .. "nil,"
+            end
+        end
+    end
+    table.foreach(_t, doT2S)
+    szRet = szRet .. "}"
+    return szRet
+end
+
+function unserialize(str)
+    str = "return " .. str;
+    local fun = loadstring(str);
+    return fun();
+end
+
+local GridManager={}
+
+function GridManager:New(o)
+	o=o or {}
+	self.__index=self
+	setmetatable(o,self)
+	self.gridList={}
+	for i=1,content.childCount do
+		local image=content:GetChild(i-1):GetComponent("Image")
+		local text=content:GetChild(i-1):GetChild(0):GetComponent("Text")
+		local gridClick=content:GetChild(i-1):GetComponent("GridClick")
+		self.gridList[i]=Grid:New()
+		self.id=0
+		self.gridList[i].image=image
+		self.gridList[i].text=text
+		self.gridList[i].gridClick=gridClick
+	end
+	local playerData=FileOperation:Load()
+	if playerData ~= nil then
+		for i=1,#self.gridList do
+			self.gridList[i].id=playerData[i].id
+			self.gridList[i].amount=playerData[i].amount
+		end
+	end
+	for i=1,#self.gridList do
+		self.gridList[i].image.sprite=class.sprite[self.gridList[i].id + 1]
+		if self.gridList[i].amount > 0 then
+			self.gridList[i].text.text=self.gridList[i].amount
+		end
+	end
+	return o
+end
+
+function GridManager:Add()
+	local temp=math.random(1,3)
+	local isExist=false
+	local isEmpty=false
+	local firstEmpty=-1
+	local existId=-1
+	for i=1,#self.gridList do
+		if self.gridList[i].id == temp then
+			isExist=true
+			if existId < 0 then
+				existId=i
+			else
+				if self.gridList[i].amount < 9 then
+					existId=i
+				end
+			end
+		end
+		if isEmpty == false then
+			if self.gridList[i].amount <= 0 then
+				firstEmpty=i
+				isEmpty=true
+			end
+		end
+		if isEmpty == false and isExist == false and i == #self.gridList then
+			return false
+		end
+	end
+	if isExist then
+		if self.gridList[existId].amount < 9 then
+			self.gridList[existId].amount=self.gridList[existId].amount+1
+			self.gridList[existId].text.text=self.gridList[existId].amount
+		else
+			if firstEmpty == -1 then
+				print("Backpack is full")
+				return false
+			end
+			self.gridList[firstEmpty]:Update(temp)
+		end
+	else
+		if firstEmpty == -1 then
+			print("Backpack is full")
+			return false
+		end
+		self.gridList[firstEmpty]:Update(temp)
+	end
+	FileOperation:Save(serialize(self.gridList))
+	return true
+end
+
+function GridManager:Delete()
+	print("This is delete event")
+	idList={}
+	for i=1,#self.gridList do
+		if self.gridList[i].gridClick.isClick then
+			idList[#idList+1]=i
+		end
+	end
+	if #idList <= 0 then
+		print("delete finished")
+		return false
+	end
+	for i=1,#idList do
+		self.gridList[idList[i]]:Clear()
+		self.gridList[idList[i]].gridClick:UpdateClick()
+	end
+	FileOperation:Save(serialize(self.gridList))
+	return true
+end
+
+function GridManager:Sort()
+	for i=1,#self.gridList do
+		local min=i
+		for j=i+1,#self.gridList do
+			if self.gridList[min].id < self.gridList[j].id then
+				min=j
+			elseif self.gridList[min].id == self.gridList[j].id then
+				if self.gridList[min].amount < self.gridList[j].amount then
+					min=j
+				end
+			end
+		end
+		if min ~= i then
+			local temp=self.gridList[i].id
+			local amount=self.gridList[i].amount
+			self.gridList[i].id = self.gridList[min].id;
+			self.gridList[i].amount = self.gridList[min].amount;
+			self.gridList[min].id = temp;
+			self.gridList[min].amount = amount;
+		end
+	end
+	for i=1,#self.gridList do
+		if self.gridList[i].amount > 0 then
+			self.gridList[i].image.sprite=class.sprite[self.gridList[i].id + 1]
+			self.gridList[i].text.text=self.gridList[i].amount
+		else
+			self.gridList[i].image.sprite=class.sprite[1]
+			self.gridList[i].text.text=""
+		end
+	end
+	FileOperation:Save(serialize(self.gridList))
+end
+
+function BtnAddOnClick()
+	if gridManager:Add() == false then
+		return print("Backpack is full")
+	end
+end
+
+function BtnDelOnClick()
+	if gridManager:Delete() == false then
+		return print("Choose a wrong goods to delete")
+	end
+end
+
+function BtnSortOnClick()
+	gridManager:Sort()
+end
+
+function main()
+	class.sprite=UserFunction.GetImage(Slua.out)
+	return class
+end
+
+function class:init(transform)
+	content=transform:Find("Scroll View/Viewport/Content").gameObject.transform
+	gridManager=GridManager:New()
+	class.btnAdd=transform:Find("BtnAdd"):GetComponent(UI.Button)
+	class.btnAdd.onClick:AddListener(BtnAddOnClick)
+	class.btnDel=transform:Find("BtnDel"):GetComponent(UI.Button)
+	class.btnDel.onClick:AddListener(BtnDelOnClick)
+	class.btnSort=transform:Find("BtnSort"):GetComponent(UI.Button)
+	class.btnSort.onClick:AddListener(BtnSortOnClick)
+end
